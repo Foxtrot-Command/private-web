@@ -2,10 +2,19 @@ import { Box, Button, Text, Image } from "@chakra-ui/react";
 import PropTypes from "prop-types";
 import { useState } from "react";
 
-const FXDButton = (props: any) => {
+type Props = {
+  text: string;
+  type?: string;
+  buttonClass?: string;
+  width?: string;
+  height?: string;
+  disabled?: boolean;
+}
+
+const FXDButton = (props: Props) => {
   const [isHover, setHover] = useState(false);
 
-  const { text, type, buttonClass, width, height, disabled } = props;
+  const { text, type, width, height, disabled } = props;
 
   return (
     <Box

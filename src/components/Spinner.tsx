@@ -1,7 +1,10 @@
 import React from "react";
 
-// <!-- By Sam Herbert (@sherb), for everyone. More @ http://goo.gl/7AJzbL -->
-export function Spinner({ color, ...rest }: any) {
+type Props = {
+  color: string;
+}
+
+export function Spinner({ color, ...rest }: Props) {
   return (
     <svg
       width="38"

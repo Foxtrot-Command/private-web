@@ -1,11 +1,11 @@
-import { Box, VStack, Badge, Text, Center, Image } from "@chakra-ui/react";
+import { Box, VStack, Badge, Text, Center, Image, ChakraProps } from "@chakra-ui/react";
 import { Web3Provider } from "@ethersproject/providers";
 import { formatEther } from "@ethersproject/units";
 import { useWeb3React } from "@web3-react/core";
 import { Contract, ethers } from "ethers";
 import { Block, Loading } from "notiflix";
 import { Notify } from "notiflix/build/notiflix-notify-aio";
-import React from "react";
+import React, { useEffect } from "react";
 
 import { defaultChain } from "../../../../connectors";
 import FXDButton from "components/FXDButton";
@@ -102,24 +102,26 @@ async function getSaleEnd() {
 
         reject(err);
       })
-      .catch((err: any) => {
+      .catch((err: unknown) => {
         reject(err);
       });
   });
 }
 
-export default function InvestSection(props: any) {
+export default function InvestSection(props: ChakraProps) {
   const { library, chainId, account } = useWeb3React<Web3Provider>();
 
-  const [allowance, setUserAllowance] = React.useState<any>();
+  const [allowance, setUserAllowance] = React.useState<number | undefined>();
   const [message, setMessage] = React.useState<string>();
   const [isSaleEnd, setSaleEnd] = React.useState<boolean>(true);
 
   React.useEffect(() => {
     if (library && account && chainId === defaultChain.chainId) {
-      callAllowanceOf(account, "busd", library).then((data: any) =>
-        setUserAllowance(formatEther(data))
-      );
+      callAllowanceOf(account, "busd", library).then(({_hex: allowance}: any) => {
+        return (
+          setUserAllowance(formatEther(allowance) as unknown as number)
+        )
+      });
     }
 
     (async () => {
@@ -131,7 +133,7 @@ export default function InvestSection(props: any) {
     })();
   }, [account, chainId, library]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const timer = setTimeout(() => setMessage(''), 3000);
     return () => clearTimeout(timer);
   }, [message]);
@@ -190,7 +192,7 @@ export default function InvestSection(props: any) {
               />
               <FXDButton
                 text={
-                  !!(library && account) && allowance >= 1000000
+                  !!(library && account) && allowance && allowance >= 1000000
                     ? "Invest"
                     : "Approve BUSD"
                 }

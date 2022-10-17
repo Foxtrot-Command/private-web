@@ -1,15 +1,17 @@
+import { ContractInterface } from "ethers";
+
 const erc20 = require("./contracts/ERC20.json");
 const fxd_abi = require("./contracts/ERC20FoxtrotCommand.json");
 const sale_abi = require("./contracts/FoxtrotPrivateSale.json");
 
 export interface ContractSetup {
   address: string;
-  abi: any;
+  abi: ContractInterface;
 }
 
 export const CONTRACTS: { [name: string]: ContractSetup } = {
   private1: {
-    address: process.env.NEXT_PUBLIC_PRIVATE_ONE_CONTRACT || "0x0",
+    address: process.env.NEXT_PUBLIC_PRIVATE_TWO_CONTRACT || "0x0",
     abi: sale_abi.abi,
   },
   busd: {

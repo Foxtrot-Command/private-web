@@ -34,12 +34,12 @@ function masterPromise({ ...content }: any) {
     }
 
     await contract?.[method](...parameters)
-      .then((data: any, err: any) => {
+      .then((data: unknown, err: unknown) => {
         if (data) resolve(data);
 
         reject(err);
       })
-      .catch((err: any) => {
+      .catch((err: unknown) => {
         reject(err);
       });
   });

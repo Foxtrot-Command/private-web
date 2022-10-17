@@ -61,7 +61,7 @@ function Percentage() {
     });
   }
 
-  React.useEffect((): any => {
+  React.useEffect(() => {
     if (provider) {
       let stale = false;
 
