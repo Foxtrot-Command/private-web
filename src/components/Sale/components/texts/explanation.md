@@ -30,7 +30,7 @@ The token is meant to enable the transition of our TCG to the Web3 ecosystem. Al
 ### About the $FXD token
 
 Token: $FXD
-Network: Binance Smart Chain (BSC)
+Network: BNB Chain (BSC)
 Token Supply: 215,000,000
 Liquidity: 23,650,000 $FXD (11%)
 
