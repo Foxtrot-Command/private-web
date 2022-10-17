@@ -1,3 +1,4 @@
+import { Provider } from "@ethersproject/providers";
 import { Networks, defaultChain } from "../../connectors";
 
 export function ellipseAddress(address = "", width = 5): string {

@@ -8,6 +8,7 @@ import {
   NumberInputField,
   Stack,
   Text,
+  UseCounterProps,
 } from "@chakra-ui/react";
 import { Web3Provider } from "@ethersproject/providers";
 import { useWeb3React } from "@web3-react/core";
@@ -16,10 +17,16 @@ import { FaExchangeAlt } from "react-icons/fa";
 
 import { getTokenRate } from "helpers/utilities";
 
-const BuyInputs = (props: any) => {
+type Props = {
+  value: number;
+  handleChange: any;
+}
+
+const BuyInputs = ({value, handleChange}: Props) => {
   const maxRaised = Number(process.env.NEXT_PUBLIC_TOTAL_RAISE);
-  const value = props.value >= maxRaised ? maxRaised : props.value;
+  const inputValue = value >= maxRaised ? maxRaised : value;
   const { library } = useWeb3React<Web3Provider>();
+
   return (
     <Stack spacing={3} width="100%">
       <NumberInput
@@ -29,8 +36,8 @@ const BuyInputs = (props: any) => {
         max={maxRaised}
         size="lg"
         variant="filled"
-        onChange={props.handleChange}
-        value={value}
+        onChange={handleChange}
+        value={inputValue}
         isDisabled={library === undefined}
       >
         <NumberInputField />
@@ -56,7 +63,7 @@ const BuyInputs = (props: any) => {
         <Input
           variant="filled"
           type="text"
-          value={getTokenRate(value).toFixed(2)}
+          value={getTokenRate(inputValue).toFixed(0)}
           disabled
         />
         <Box color="brand.bg.400">

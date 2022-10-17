@@ -1,7 +1,11 @@
 
 # About the project
 
-[Foxtrot Command](https://foxtrotcommand.com) is the first step in the making of a great military metaverse, the gateway to a world of unparalleled creation and customization where the player holds absolute power over his NFT assets.
+[Foxtrot Command](https://foxtrotcommand.com) is the starting point to the construction of a IP set in a post-apocalyptic world after a massive war has destroyed the earth. 
+
+Is the first project of the company whose intention is to revolutionize the GameFi world by providing a hybrid economy that bases its rewards mainly on NFTs and stable currencies. Our main goal is to recover the concept of the word 'video game' bringing mainly entertainment and fun to the users. Thanks to web3 technology, we can incorporate a reward system, but these rewards are only intended for those users who show enough skill and knowledge to reach the top of the ranking of tournaments and seasons.
+
+A TCG ([trading card game](https://en.wikipedia.org/wiki/Collectible_card_game)) being today one of the reference genres on the web2 and being the reference genre on the web3 with a potential of several million users worldwide. The new mechanics and the innovative double lane system not only bring a touch of fresh air to the genre, but also make it a fast and extremely competitive game.
 
 ![Foxtrot Commanders](images/information/test.png)
 

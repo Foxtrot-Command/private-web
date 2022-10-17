@@ -4,6 +4,7 @@ import rehypeRaw from "rehype-raw";
 
 import Explanation from "components/Sale/components/texts/explanation.md";
 import Link from "next/link";
+import React from "react";
 
 const TabSectionText = () => {
   return (
@@ -12,9 +13,22 @@ const TabSectionText = () => {
         rehypePlugins={[rehypeRaw]}
         components={{
           a: ({ href, children }) => {
+            console.log(href)
             return (
-              <Link href={href as unknown as URL}>
-                <Box as="a" textDecoration="ButtonFace">{children}</Box>
+              <Link href={new URL(href as string)} passHref>
+                <Box
+                  as="a"
+                  cursor="pointer"
+                  target="_blank"
+                  borderColor='gray.200'
+                  borderBottom="1px"
+                  transition="all ease-in-out 0.2s"
+                  _hover={{
+                    color: "gray.300",
+                  }}
+                >
+                  {children}
+                </Box>
               </Link>
             )
           },
@@ -65,12 +79,12 @@ const TabSectionText = () => {
           img: ({ node, children }: any) => {
             return (
               <Box>
-                <Image 
-                src={node.properties.src} 
-                objectFit="cover" 
-                rounded="6" 
-                userSelect="none" 
-                pointerEvents="none" 
+                <Image
+                  src={node.properties.src}
+                  objectFit="cover"
+                  rounded="6"
+                  userSelect="none"
+                  pointerEvents="none"
                 />
               </Box>
             );

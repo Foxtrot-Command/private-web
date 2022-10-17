@@ -3,7 +3,7 @@ import React from "react";
 
 import TabSectionText from "components/Sale/components/TabSectionText";
 
-const TabSection = ({ ...props }: any) => {
+const TabSection = () => {
   return (
     <Box
       rounded="lg"

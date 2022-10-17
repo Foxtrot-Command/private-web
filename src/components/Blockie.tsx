@@ -5,15 +5,16 @@ import * as React from "react";
 interface IBlockieStyleProps {
   size?: number;
   border?: boolean;
+  children: React.ReactNode;
 }
 
 interface IBlockieProps extends IBlockieStyleProps {
   address: string;
 }
 
-const BlockBorder = (props: any) => (
+const BlockBorder = ({size, children}: IBlockieStyleProps) => (
   <Box
-    boxSize={props.size}
+    boxSize={size}
     rounded="lg"
     w="40px"
     h="100%"
@@ -22,12 +23,12 @@ const BlockBorder = (props: any) => (
     display="flex"
     ml="10px"
   >
-    {props.children}
+    {children}
   </Box>
 );
 
-const BlockImage = (props: any) => {
-  const seed = props.address.toLowerCase() || "";
+const BlockImage = ({address, size}: IBlockieProps) => {
+  const seed = address.toLowerCase() || "";
   const imgUrl = blockies
     .create({
       seed,
@@ -36,10 +37,10 @@ const BlockImage = (props: any) => {
   return (
     <Image
       src={imgUrl}
-      alt={props.address}
+      alt={address}
       rounded="md"
-      width={`${props.size}px`}
-      height={`${props.size}px`}
+      width={`${size}px`}
+      height={`${size}px`}
       margin="auto"
     />
   );
