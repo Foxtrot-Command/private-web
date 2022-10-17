@@ -10,7 +10,7 @@ export interface ContractSetup {
 }
 
 export const CONTRACTS: { [name: string]: ContractSetup } = {
-  private1: {
+  private2: {
     address: process.env.NEXT_PUBLIC_PRIVATE_TWO_CONTRACT || "0x0",
     abi: sale_abi.abi,
   },

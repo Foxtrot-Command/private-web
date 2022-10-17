@@ -6,7 +6,7 @@ import { defaultChain } from "../../connectors";
 import { CONTRACTS } from "../constants";
 
 enum CONTRACT {
-  PRIVATE_ONE = "private1",
+  PRIVATE_ONE = "private2",
   BUSD = "busd",
   FXD = "fxd",
 }
@@ -50,7 +50,7 @@ export async function ApproveAllowance(chainId: string, provider: any) {
     const caller = getContract(chainId, provider);
 
     await caller
-      ?.approve(CONTRACTS.private1.address, parseEther("100000000000"))
+      ?.approve(CONTRACTS.private2.address, parseEther("100000000000"))
       .then((data: any, err: any) => {
         if (data) {
           resolve(data);
@@ -81,7 +81,7 @@ export function callAllowanceOf(
     const caller = getContract(chainId, provider);
 
     await caller
-      ?.allowance(address, CONTRACTS.private1.address)
+      ?.allowance(address, CONTRACTS.private2.address)
       .then((data: any, err: any) => {
         if (data) {
           resolve(data);

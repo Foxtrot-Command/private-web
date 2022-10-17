@@ -90,8 +90,8 @@ async function getSaleEnd() {
   const provider = ethers.getDefaultProvider(defaultChain.rpc);
   return new Promise(async (resolve, reject) => {
     const contract = new Contract(
-      CONTRACTS.private1.address,
-      CONTRACTS.private1.abi,
+      CONTRACTS.private2.address,
+      CONTRACTS.private2.abi,
       provider
     );
 
