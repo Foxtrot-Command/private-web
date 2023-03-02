@@ -38,7 +38,7 @@ const BuyConditions = () => (
 
       <UnorderedList spacing={1} p="15px 10px 15px 10px">
         {[
-          `Minimum investment ${process.env.NEXT_PUBLIC_BUSD_MIN_AMOUNT} $BUSD`,
+          `Minimum investment ~`,
           "Maximum investment: ~",
           `Unlocking ${process.env.NEXT_PUBLIC_TOKEN_UNBLOCK_ON_TGE}% on TGE`,
           "3 months of cliff",

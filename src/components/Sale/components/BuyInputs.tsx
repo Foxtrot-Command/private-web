@@ -8,7 +8,6 @@ import {
   NumberInputField,
   Stack,
   Text,
-  UseCounterProps,
 } from "@chakra-ui/react";
 import { Web3Provider } from "@ethersproject/providers";
 import { useWeb3React } from "@web3-react/core";
@@ -20,9 +19,9 @@ import { getTokenRate } from "helpers/utilities";
 type Props = {
   value: number;
   handleChange: any;
-}
+};
 
-const BuyInputs = ({value, handleChange}: Props) => {
+const BuyInputs = ({ value, handleChange }: Props) => {
   const maxRaised = Number(process.env.NEXT_PUBLIC_TOTAL_RAISE);
   const inputValue = value >= maxRaised ? maxRaised : value;
   const { library } = useWeb3React<Web3Provider>();
