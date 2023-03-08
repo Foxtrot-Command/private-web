@@ -225,7 +225,7 @@ const DesktopNav = () => {
           minW="xs"
         >
           <Stack>
-            {WalletBoxInfo({ account, chainId })}
+            {WalletBoxInfo({ account, chainId: chainId?.toString() })}
             <Button
               background="brand.primary.600"
               borderRadius={3}
