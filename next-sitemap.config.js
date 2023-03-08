@@ -1,6 +1,6 @@
 /** @type {import('next-sitemap').IConfig} */
 const NextSitemapConfig = {
-  siteUrl: "https://private2.foxtrotcommand.com",
+  siteUrl: "https://private.foxtrotcommand.com",
   generateRobotsTxt: true,
 };
 

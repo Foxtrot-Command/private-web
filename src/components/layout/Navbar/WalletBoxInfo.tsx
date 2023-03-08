@@ -14,18 +14,18 @@ import { FaClipboard, FaExternalLinkAlt } from "react-icons/fa";
 import { Networks } from "../../../../connectors";
 import Blockie from "components/Blockie";
 import { ellipseAddress } from "helpers/utilities";
-import { ethers } from "ethers";
 
 const WalletBoxInfo = ({
   account,
   chainId,
 }: {
   account: string;
-  chainId: number | undefined;
+  chainId: string | undefined;
 }) => {
   const networkName = Object.keys(Networks).find(
-    (key) => Networks[key].chainId === chainId
+    (key) => Networks[key].chainId === String(chainId)
   ) as string;
+
   return (
     <>
       <Center>
@@ -52,7 +52,7 @@ const WalletBoxInfo = ({
                 </Box>
                 <Box>
                   <ChakraLink
-                    href={`${Networks[networkName].explorer}/address/${account}`}
+                    href={`${Networks[networkName]?.explorer}/address/${account}`}
                     isExternal
                   >
                     <Tooltip label="See on bscscan.com" hasArrow>

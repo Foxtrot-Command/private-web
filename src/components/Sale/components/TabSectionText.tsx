@@ -1,10 +1,10 @@
 import { Box, Divider, Heading, Text, Image } from "@chakra-ui/react";
+import Link from "next/link";
+import React from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 
 import Explanation from "components/Sale/components/texts/explanation.md";
-import Link from "next/link";
-import React from "react";
 
 const TabSectionText = () => {
   return (
@@ -13,14 +13,13 @@ const TabSectionText = () => {
         rehypePlugins={[rehypeRaw]}
         components={{
           a: ({ href, children }) => {
-            console.log(href)
             return (
               <Link href={new URL(href as string)} passHref>
                 <Box
                   as="a"
                   cursor="pointer"
                   target="_blank"
-                  borderColor='gray.200'
+                  borderColor="gray.200"
                   borderBottom="1px"
                   transition="all ease-in-out 0.2s"
                   _hover={{
@@ -30,7 +29,7 @@ const TabSectionText = () => {
                   {children}
                 </Box>
               </Link>
-            )
+            );
           },
           h1: ({ children }) => {
             return (
