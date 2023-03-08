@@ -43,8 +43,8 @@ function Percentage() {
   async function busdInvested() {
     return new Promise(async (resolve, reject) => {
       const contract = new Contract(
-        CONTRACTS.private1.address,
-        CONTRACTS.private1.abi,
+        CONTRACTS.private.address,
+        CONTRACTS.private.abi,
         provider
       );
 

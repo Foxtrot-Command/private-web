@@ -5,7 +5,7 @@ import * as React from "react";
 interface IBlockieStyleProps {
   size?: number;
   border?: boolean;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 interface IBlockieProps extends IBlockieStyleProps {

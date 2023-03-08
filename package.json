@@ -1,8 +1,8 @@
 {
-  "name": "private1-sale-foxtrot",
-  "version": "0.1.0",
+  "name": "private-sale-foxtrot",
+  "version": "1.0.0",
   "private": true,
-  "author": "Foxtrot Private1 Sale",
+  "author": "dapp-team",
   "scripts": {
     "dev": "next dev",
     "build": "next build && next export",

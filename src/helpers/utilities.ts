@@ -1,4 +1,5 @@
 import { Provider } from "@ethersproject/providers";
+
 import { Networks, defaultChain } from "../../connectors";
 
 export function ellipseAddress(address = "", width = 5): string {
@@ -25,7 +26,7 @@ interface IWeb3Asset {
     image?: string;
   };
   provider: any;
-  account: string;
+  account: string | null;
 }
 
 export async function addWeb3Asset({ provider, account, token }: IWeb3Asset) {

@@ -1,103 +1,40 @@
-import { Box, VStack, Badge, Text, Center, Image, ChakraProps } from "@chakra-ui/react";
+import {
+  Box,
+  VStack,
+  Badge,
+  Text,
+  Center,
+  Image,
+  ChakraProps,
+} from "@chakra-ui/react";
 import { Web3Provider } from "@ethersproject/providers";
 import { formatEther } from "@ethersproject/units";
 import { useWeb3React } from "@web3-react/core";
 import { Contract, ethers } from "ethers";
-import { Block, Loading } from "notiflix";
-import { Notify } from "notiflix/build/notiflix-notify-aio";
 import React, { useEffect } from "react";
 
-import { defaultChain } from "../../../../connectors";
+import { defaultChain } from "../../../../../connectors";
+import BuyInputs from "../BuyInputs";
 import FXDButton from "components/FXDButton";
 import { CONTRACTS } from "constants/contracts";
 import { getTokenRate } from "helpers/utilities";
-import {
-  ApproveAllowance,
-  callAllowanceOf,
-  Invest,
-} from "helpers/web3";
+import { callAllowanceOf, callWhitelistedAmountOf } from "helpers/web3";
 import useNumberField from "hooks/useNumberField";
 
-import BuyInputs from "./BuyInputs";
+import { HandleInvest } from "./HandleInvest";
 
-const HandleInvest = ({
-  value,
-  library,
-  account,
-  allowance,
-  setUserAllowance,
-}: any) => {
-  const delay = 1200;
-
-  if (!!(library && account) && allowance < 1000000) {
-    Block.standard("#element", "Please wait...", {
-      backgroundColor: "rgba(0, 0, 0, 0.5)",
-      messageColor: "rgba(255, 255, 255, 0.8)",
-    });
-    ApproveAllowance("busd", library)
-      .then(async (data: any) => {
-        library.once(data.hash, (transaction: any) => {
-          if (transaction && transaction.blockNumber) {
-            Block.remove("#element");
-            Notify.success("Approved contract");
-            setUserAllowance(1000000);
-          }
-          library.removeListener(data.hash);
-        });
-      })
-      .catch((error: any) => {
-        Block.remove("#element", delay);
-        return error?.message !== undefined && Notify.failure(error.message);
-      });
-  } else {
-    Loading.standard("Processing investment...", {
-      svgColor: "#E51A29",
-    });
-    Invest(value.toString(), library)
-      .then(async (data: any) => {
-        Notify.success(
-          `Hash of the transaction: <a href="https://bscscan.com/tx/${data.hash}">${data.hash}</a>`,
-          {
-            timeout: delay + 1000,
-            plainText: false,
-            messageMaxLength: 200,
-          }
-        );
-
-        Loading.change("Waiting for confirmation...");
-        library.once(data.hash, (transaction: any) => {
-          if (transaction && transaction.blockNumber) {
-            Notify.success("Payment confirmed", {
-              timeout: delay,
-            });
-            Loading.remove(delay);
-          }
-          library.removeListener(data.hash);
-        });
-      })
-      .catch((error: any) => {
-        Loading.remove();
-        return error?.data?.message !== undefined
-          ? Notify.failure(error.data.message)
-          : String(error).includes("execution reverted")
-          ? Notify.failure(error)
-          : Notify.failure("Payment rejected");
-      });
-  }
-};
-
-async function getSaleEnd() {
+async function getPrivatesaleStatus(): Promise<boolean> {
   const provider = ethers.getDefaultProvider(defaultChain.rpc);
   return new Promise(async (resolve, reject) => {
     const contract = new Contract(
-      CONTRACTS.private1.address,
-      CONTRACTS.private1.abi,
+      CONTRACTS.private.address,
+      CONTRACTS.private.abi,
       provider
     );
 
     await contract
-      .getSaleEnd()
-      .then((data: any, err: any) => {
+      .showPrivateSaleStatus()
+      .then((data: boolean, err: any) => {
         if (data) resolve(data);
 
         reject(err);
@@ -111,30 +48,33 @@ async function getSaleEnd() {
 export default function InvestSection(props: ChakraProps) {
   const { library, chainId, account } = useWeb3React<Web3Provider>();
 
+  const [whitelistedAmount, setWhitelistedAmount] = React.useState<number>(0);
   const [allowance, setUserAllowance] = React.useState<number | undefined>();
   const [message, setMessage] = React.useState<string>();
-  const [isSaleEnd, setSaleEnd] = React.useState<boolean>(true);
+  const [isPrivateSaleOpen, setPrivateSaleStatus] =
+    React.useState<boolean>(true);
 
   React.useEffect(() => {
-    if (library && account && chainId === defaultChain.chainId) {
-      callAllowanceOf(account, "busd", library).then(({_hex: allowance}: any) => {
-        return (
-          setUserAllowance(formatEther(allowance) as unknown as number)
-        )
-      });
+    if (library && account && String(chainId) === defaultChain.chainId) {
+      callAllowanceOf(account, "busd", library).then(
+        ({ _hex: allowance }: any) => {
+          return setUserAllowance(formatEther(allowance) as unknown as number);
+        }
+      );
+
+      callWhitelistedAmountOf(account, library).then((data: any) =>
+        setWhitelistedAmount(Number(formatEther(data)))
+      );
     }
 
     (async () => {
-      const time = await getSaleEnd();
-      setSaleEnd(
-        Number(formatEther(time as string)) * 1e18 <
-          Math.floor(Date.now() / 1000)
-      );
+      const status: boolean = await getPrivatesaleStatus();
+      setPrivateSaleStatus(status);
     })();
   }, [account, chainId, library]);
 
   useEffect(() => {
-    const timer = setTimeout(() => setMessage(''), 3000);
+    const timer = setTimeout(() => setMessage(""), 3000);
     return () => clearTimeout(timer);
   }, [message]);
 
@@ -184,7 +124,7 @@ export default function InvestSection(props: ChakraProps) {
             1 BUSD = {getTokenRate(1).toFixed(0)} FXD
           </Badge>
 
-          {!isSaleEnd && (
+          {isPrivateSaleOpen && (
             <>
               <BuyInputs
                 handleChange={inputBusd.onChange}
@@ -210,6 +150,15 @@ export default function InvestSection(props: ChakraProps) {
                   })
                 }
               />
+              {!!(library && account) && whitelistedAmount ? (
+                <Center fontSize={10} paddingTop="10px" color="brand.bg.400">
+                  <Text>
+                    Your wallet is limited to {whitelistedAmount} BUSD
+                  </Text>
+                </Center>
+              ) : (
+                ""
+              )}
             </>
           )}
         </VStack>

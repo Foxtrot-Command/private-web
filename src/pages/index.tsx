@@ -1,7 +1,7 @@
 import { Box, Flex, Center, HStack } from "@chakra-ui/react";
 
 import BuyConditions from "components/Sale/components/BuyConditions";
-import InvestSection from "components/Sale/components/InvestSection";
+import InvestSection from "components/Sale/components/InvestSection/InvestSection";
 import TabSection from "components/Sale/components/TabSection";
 
 const Home = () => {

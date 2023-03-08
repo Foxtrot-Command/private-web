@@ -17,8 +17,9 @@ import {
   Image,
 } from "@chakra-ui/react";
 import { Web3Provider } from "@ethersproject/providers";
+import { AbstractConnector } from "@web3-react/abstract-connector";
 import { useWeb3React } from "@web3-react/core";
-import { BigNumber, ethers } from "ethers";
+import { BigNumberish, ethers } from "ethers";
 import Link from "next/link";
 import React from "react";
 import { FaChevronDown, FaBars, FaWindowClose } from "react-icons/fa";
@@ -28,14 +29,13 @@ import {
   walletconnect,
   walletlink,
   network,
-  Networks,
   defaultChain,
 } from "../../../connectors";
 import Blockie from "components/Blockie";
 import WalletBoxInfo from "components/layout/Navbar/WalletBoxInfo";
 import { CONTRACTS } from "constants/contracts";
 import { addWeb3Asset, ellipseAddress, switchNetwork } from "helpers/utilities";
-import { callBalanceOf, getContract } from "helpers/web3";
+import { callBalanceOf } from "helpers/web3";
 import { useEagerConnect, useInactiveListener } from "hooks";
 
 export default function WithSubnavigation() {
@@ -131,12 +131,14 @@ const DesktopNav = () => {
   } = useWeb3React<Web3Provider>();
 
   const [activatingConnector, setActivatingConnector] = React.useState<any>();
-  const [userBalance, setUserBalance] = React.useState<any>();
+  const [userBalance, setUserBalance] = React.useState<
+    BigNumberish | undefined
+  >();
   React.useEffect(() => {
     if (activatingConnector && activatingConnector === connector) {
       setActivatingConnector(undefined);
 
-      if (library && account && chainId === defaultChain.chainId) {
+      if (library && account && chainId === Number(defaultChain.chainId)) {
         (async () => {
           const balanceFXD = await callBalanceOf(account, library);
           setUserBalance(
@@ -153,7 +155,7 @@ const DesktopNav = () => {
 
   const addFXD = async () => {
     addWeb3Asset({
-      account: account as string,
+      account: account !== undefined ? account : "",
       provider: library,
       token: {
         symbol: "FXD",
@@ -164,27 +166,22 @@ const DesktopNav = () => {
 
   const WalletSectionMenu = ({ navItem }: { navItem: NavItem }) => {
     return (
-      (
-        <PopoverContent
-          border={0}
-          boxShadow="xl"
-          bg={popoverContentBgColor}
-          p={4}
-          rounded={6}
-          minW="xs"
-        >
-          <Stack>
-
-            {navItem.children && navItem.children.map((child: any, index: number) => {
+      <PopoverContent
+        border={0}
+        boxShadow="xl"
+        bg={popoverContentBgColor}
+        p={4}
+        rounded={6}
+        minW="xs"
+      >
+        <Stack>
+          {navItem.children &&
+            navItem.children.map((child: any, index: number) => {
               const currentConnector = child.connector;
-              const activating =
-                currentConnector === activatingConnector;
+              const activating = currentConnector === activatingConnector;
               const connected = currentConnector === connector;
               const disabled =
-                !triedEager ||
-                !!activatingConnector ||
-                connected ||
-                !!error;
+                !triedEager || !!activatingConnector || connected || !!error;
               return (
                 <DesktopSubNav
                   key={index}
@@ -193,7 +190,7 @@ const DesktopNav = () => {
                   image={child.image}
                   disabled={disabled}
                   onClick={() => {
-                    if (chainId !== defaultChain.chainId) {
+                    if (chainId !== Number(defaultChain.chainId)) {
                       // if different, show warning
                       switchNetwork();
                       setActivatingConnector(currentConnector);
@@ -205,13 +202,18 @@ const DesktopNav = () => {
                 />
               );
             })}
-          </Stack>
-        </PopoverContent>
-      )
-    )
-  }
+        </Stack>
+      </PopoverContent>
+    );
+  };
 
-  const WalletConnected = ({ account, chainId }: { account: string, chainId: number | undefined }) => {
+  const WalletConnected = ({
+    account,
+    chainId,
+  }: {
+    account: string;
+    chainId: number | undefined;
+  }) => {
     return (
       <>
         <PopoverContent
@@ -234,41 +236,43 @@ const DesktopNav = () => {
             >
               Disconnect
             </Button>
-            {connector ===
-              connectorsByName[ConnectorNames.WalletConnect] && (
-                <button
-                  style={{
-                    height: "3rem",
-                    borderRadius: "1rem",
-                    cursor: "pointer",
-                  }}
-                  onClick={() => {
-                    (connector as any).close();
-                  }}
-                >
-                  Kill WalletConnect Session
-                </button>
-              )}
-            {connector ===
-              connectorsByName[ConnectorNames.WalletLink] && (
-                <button
-                  style={{
-                    height: "3rem",
-                    borderRadius: "1rem",
-                    cursor: "pointer",
-                  }}
-                  onClick={() => {
-                    (connector as any).close();
-                  }}
-                >
-                  Kill WalletLink Session
-                </button>
-              )}
+            {connector === connectorsByName[ConnectorNames.WalletConnect] && (
+              <button
+                style={{
+                  height: "3rem",
+                  borderRadius: "1rem",
+                  cursor: "pointer",
+                }}
+                onClick={() => {
+                  if (connector) {
+                    connector.deactivate();
+                  }
+                }}
+              >
+                Kill WalletConnect Session
+              </button>
+            )}
+            {connector === connectorsByName[ConnectorNames.WalletLink] && (
+              <button
+                style={{
+                  height: "3rem",
+                  borderRadius: "1rem",
+                  cursor: "pointer",
+                }}
+                onClick={() => {
+                  if (connector) {
+                    connector.deactivate();
+                  }
+                }}
+              >
+                Kill WalletLink Session
+              </button>
+            )}
           </Stack>
         </PopoverContent>
       </>
-    )
-  }
+    );
+  };
 
   return (
     <Stack direction="row" spacing={4}>
@@ -315,10 +319,11 @@ const DesktopNav = () => {
                   )}
                 </ChakraLink>
               </PopoverTrigger>
-              {library && account ?
-                <WalletConnected chainId={chainId} account={account} /> :
-                (navItem.children && <WalletSectionMenu navItem={navItem} />)
-              }
+              {library && account ? (
+                <WalletConnected chainId={chainId} account={account} />
+              ) : (
+                navItem.children && <WalletSectionMenu navItem={navItem} />
+              )}
             </Popover>
           </Box>
         );

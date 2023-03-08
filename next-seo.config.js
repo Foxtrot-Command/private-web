@@ -2,12 +2,12 @@
 const defaultSEOConfig = {
   title: "Foxtrot Command Private Sale",
   titleTemplate: "%s | Private Sale",
-  defaultTitle: "private1-sale-foxtrot",
+  defaultTitle: "Foxtrot Private Sale Phase 2",
   description: "Foxtrot Command Private Sale",
   canonical: "https://foxtrotcommand.com",
   openGraph: {
     url: "https://foxtrotcommand.com",
-    title: "foxtrot-command-private1-sale",
+    title: "Foxtrot Command Private Sale 2",
     description: "Foxtrot Command Private Sale",
     images: [
       {

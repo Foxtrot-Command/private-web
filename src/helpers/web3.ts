@@ -1,3 +1,4 @@
+import { TransactionResponse } from "@ethersproject/providers";
 import { formatEther, parseEther } from "@ethersproject/units";
 import { BigNumber, Contract } from "ethers";
 import { Notify } from "notiflix";
@@ -6,7 +7,7 @@ import { defaultChain } from "../../connectors";
 import { CONTRACTS } from "../constants";
 
 enum CONTRACT {
-  PRIVATE_ONE = "private1",
+  PRIVATE = "private",
   BUSD = "busd",
   FXD = "fxd",
 }
@@ -17,7 +18,9 @@ export function getContract(chainId: string, provider: any) {
     provider
   );
   const providerChainId = Number(BigNumber.from(provider.provider.chainId));
-  return provider !== undefined && defaultChain.chainId === providerChainId
+
+  return provider !== undefined &&
+    Number(defaultChain.chainId) === providerChainId
     ? contract.connect(provider.getSigner())
     : undefined;
 }
@@ -50,7 +53,7 @@ export async function ApproveAllowance(chainId: string, provider: any) {
     const caller = getContract(chainId, provider);
 
     await caller
-      ?.approve(CONTRACTS.private1.address, parseEther("100000000000"))
+      ?.approve(CONTRACTS.private.address, parseEther("100000000000"))
       .then((data: any, err: any) => {
         if (data) {
           resolve(data);
@@ -63,13 +66,22 @@ export async function ApproveAllowance(chainId: string, provider: any) {
   });
 }
 
-export function Invest(amount: string, provider: any) {
+export function callWhitelistedAmountOf(address: string, provider: any) {
   return masterPromise({
-    chainId: CONTRACT.PRIVATE_ONE,
+    chainId: CONTRACT.PRIVATE,
+    provider,
+    method: "amount",
+    parameters: [address],
+  });
+}
+
+export async function Invest(amount: string, provider: any) {
+  return (await masterPromise({
+    chainId: CONTRACT.PRIVATE,
     provider,
     method: "invest",
     parameters: [parseEther(amount)],
-  });
+  })) as TransactionResponse;
 }
 
 export function callAllowanceOf(
@@ -81,7 +93,7 @@ export function callAllowanceOf(
     const caller = getContract(chainId, provider);
 
     await caller
-      ?.allowance(address, CONTRACTS.private1.address)
+      ?.allowance(address, CONTRACTS.private.address)
       .then((data: any, err: any) => {
         if (data) {
           resolve(data);
@@ -105,7 +117,7 @@ export function callBalanceOf(address: string, provider: any) {
 
 export function claim(provider: any) {
   return masterPromise({
-    chainId: CONTRACT.PRIVATE_ONE,
+    chainId: CONTRACT.PRIVATE,
     provider,
     method: "claim",
     parameters: [],
@@ -114,7 +126,7 @@ export function claim(provider: any) {
 
 export function callTotals(method: string, address: string, provider: any) {
   return masterPromise({
-    chainId: CONTRACT.PRIVATE_ONE,
+    chainId: CONTRACT.PRIVATE,
     provider,
     method,
     parameters: [address],
@@ -123,7 +135,7 @@ export function callTotals(method: string, address: string, provider: any) {
 
 export function callTotalBusdInvested(provider: any) {
   return masterPromise({
-    chainId: CONTRACT.PRIVATE_ONE,
+    chainId: CONTRACT.PRIVATE,
     provider,
     method: "totalBusdInvested",
     parameters: [],
@@ -132,7 +144,7 @@ export function callTotalBusdInvested(provider: any) {
 
 export function callClaimStartAt(provider: any) {
   return new Promise(async (resolve, reject) => {
-    const caller = getContract(CONTRACT.PRIVATE_ONE, provider);
+    const caller = getContract(CONTRACT.PRIVATE, provider);
 
     await caller
       ?.claimStartAt()
